@@ -1,6 +1,10 @@
 # Django — Beginner to Advanced
 
-> A complete Django learning guide from **Beginner → Intermediate → Advanced**, with full code examples and explanations in **English 🇬🇧 + Khmer 🇰🇭**.
+> Complete Django learning guide from **Beginner → Intermediate → Advanced** with full code examples and **English 🇬🇧 + Khmer 🇰🇭** explanations.
+
+[![Django](https://img.shields.io/badge/Django-6.0-092E20?logo=django\&logoColor=white)](https://www.djangoproject.com/)
+[![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python\&logoColor=white)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 ---
 
@@ -12,7 +16,7 @@
 * [4. Installation](#4-installation)
 * [5. Create Your First Project](#5-create-your-first-project)
 * [6. Create Your First App](#6-create-your-first-app)
-* [7. Django Project Structure](#7-django-project-structure)
+* [7. Project Structure](#7-project-structure)
 * [8. Settings](#8-settings)
 * [9. URLs](#9-urls)
 * [10. Views](#10-views)
@@ -53,17 +57,20 @@
 * [45. Static Files in Production](#45-static-files-in-production)
 * [46. Deployment](#46-deployment)
 * [47. Performance Optimization](#47-performance-optimization)
-* [48. Project Structure for Large Applications](#48-project-structure-for-large-applications)
-* [49. Useful Django Commands](#49-useful-django-commands)
-* [50. Learning Roadmap](#50-learning-roadmap)
+* [48. Large Project Structure](#48-large-project-structure)
+* [49. Useful Commands](#49-useful-commands)
+* [50. Complete Mini Project](#50-complete-mini-project)
+* [51. GitHub Workflow](#51-github-workflow)
+* [52. Learning Roadmap](#52-learning-roadmap)
+* [53. Official Documentation](#53-official-documentation)
 
 ---
 
 # 1. What is Django?
 
-## English
+## 🇬🇧 English
 
-Django is a high-level Python web framework used to build secure, scalable, and maintainable web applications.
+[Django](https://www.djangoproject.com/) is a high-level Python web framework for building secure, scalable, and maintainable web applications.
 
 Django provides many features out of the box:
 
@@ -77,7 +84,7 @@ Django provides many features out of the box:
 * Admin panel
 * Forms
 * Sessions
-* Security protection
+* Security
 * Middleware
 * Testing
 * Caching
@@ -85,7 +92,7 @@ Django provides many features out of the box:
 * File uploads
 * Async support
 
-## Khmer
+## 🇰🇭 Khmer
 
 Django គឺជា **Web Framework សម្រាប់ Python** ដែលប្រើសម្រាប់បង្កើត Web Application។
 
@@ -97,7 +104,8 @@ Django មានមុខងារសំខាន់ៗជាច្រើនស�
 * Database ORM
 * Migration
 * Login / Logout
-* User Authentication
+* Authentication
+* Authorization
 * Admin Panel
 * Forms
 * Sessions
@@ -113,32 +121,47 @@ Django មានមុខងារសំខាន់ៗជាច្រើនស�
 
 # 2. Django Architecture
 
-Django commonly follows the **MTV architecture**:
+Django commonly uses the **MTV architecture**.
 
 ```text
-User
-  |
-  v
-URL
-  |
-  v
-View
-  |
-  +------> Model ------> Database
-  |
-  v
-Template
-  |
-  v
-HTML Response
-  |
-  v
-User
+                    ┌──────────────┐
+                    │    Browser   │
+                    └──────┬───────┘
+                           │
+                           ▼
+                    ┌──────────────┐
+                    │     URL      │
+                    └──────┬───────┘
+                           │
+                           ▼
+                    ┌──────────────┐
+                    │     View     │
+                    └───┬──────┬───┘
+                        │      │
+                        │      ▼
+                        │  ┌──────────┐
+                        │  │  Model   │
+                        │  └────┬─────┘
+                        │       │
+                        │       ▼
+                        │  ┌──────────┐
+                        │  │ Database │
+                        │  └──────────┘
+                        │
+                        ▼
+                    ┌──────────────┐
+                    │   Template   │
+                    └──────┬───────┘
+                           │
+                           ▼
+                    ┌──────────────┐
+                    │    HTML      │
+                    └──────────────┘
 ```
 
-## M — Model
+### Model
 
-Responsible for database structure and data.
+Handles database data.
 
 ```python
 from django.db import models
@@ -146,49 +169,67 @@ from django.db import models
 
 class Product(models.Model):
     name = models.CharField(max_length=100)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-```
-
-## T — Template
-
-Responsible for presentation.
-
-```html
-<h1>{{ product.name }}</h1>
-<p>${{ product.price }}</p>
-```
-
-## V — View
-
-Responsible for application logic.
-
-```python
-from django.shortcuts import render
-from .models import Product
-
-
-def product_detail(request, product_id):
-    product = Product.objects.get(id=product_id)
-
-    return render(
-        request,
-        "products/detail.html",
-        {"product": product},
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
     )
 ```
 
-## Khmer
+### View
 
-* **Model** = គ្រប់គ្រង Database
-* **Template** = បង្ហាញ HTML
-* **View** = គ្រប់គ្រង Logic
-* **URL** = កំណត់ថា URL ណាទៅ View ណា
+Handles application logic.
+
+```python
+from django.shortcuts import render
+
+from .models import Product
+
+
+def product_list(request):
+    products = Product.objects.all()
+
+    return render(
+        request,
+        "products/list.html",
+        {"products": products},
+    )
+```
+
+### Template
+
+Displays data.
+
+```html
+<h1>{{ product.name }}</h1>
+
+<p>${{ product.price }}</p>
+```
+
+### 🇰🇭 Khmer
+
+* **Model** → គ្រប់គ្រង Database
+* **View** → គ្រប់គ្រង Application Logic
+* **Template** → បង្ហាញ HTML
+* **URL** → ភ្ជាប់ URL ទៅ View
 
 ---
 
 # 3. Requirements
 
-Recommended:
+Django 6.0 supports:
+
+```text
+Python 3.12
+Python 3.13
+Python 3.14
+```
+
+Official compatibility information:
+
+* [Django 6.0 Installation](https://docs.djangoproject.com/en/6.0/intro/install/)
+* [Django Python Compatibility](https://docs.djangoproject.com/en/6.0/faq/install/)
+
+Recommended tools:
 
 ```text
 Python 3.12+
@@ -197,8 +238,6 @@ Git
 VS Code
 PostgreSQL
 ```
-
-Django 6.0 officially supports Python 3.12, 3.13 and 3.14.
 
 Check Python:
 
@@ -218,7 +257,7 @@ git --version
 
 ## Windows
 
-Create a project folder:
+Create project folder:
 
 ```powershell
 mkdir django-project
@@ -231,23 +270,34 @@ Create virtual environment:
 python -m venv venv
 ```
 
-Activate it:
+Activate:
 
 ```powershell
 venv\Scripts\activate
 ```
 
-Install Django:
+Upgrade pip:
 
 ```powershell
 python -m pip install --upgrade pip
-pip install django
 ```
 
-Verify:
+Install Django:
+
+```powershell
+python -m pip install "Django>=6.0,<6.1"
+```
+
+Check version:
 
 ```powershell
 python -m django --version
+```
+
+Expected:
+
+```text
+6.0.x
 ```
 
 ---
@@ -264,7 +314,7 @@ source venv/bin/activate
 
 python -m pip install --upgrade pip
 
-pip install django
+python -m pip install "Django>=6.0,<6.1"
 
 python -m django --version
 ```
@@ -273,7 +323,7 @@ python -m django --version
 
 # 5. Create Your First Project
 
-Create project:
+Create:
 
 ```bash
 django-admin startproject config .
@@ -291,23 +341,42 @@ Open:
 http://127.0.0.1:8000/
 ```
 
-Stop server:
+Official tutorial:
 
-```text
-CTRL + C
-```
+[Writing your first Django app](https://docs.djangoproject.com/en/6.0/intro/tutorial01/)
 
 ---
 
 # 6. Create Your First App
 
-Create an app:
+Create app:
 
 ```bash
 python manage.py startapp products
 ```
 
-Project:
+Add it to:
+
+```python
+# config/settings.py
+
+INSTALLED_APPS = [
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+
+    "products",
+]
+```
+
+---
+
+# 7. Project Structure
+
+After setup:
 
 ```text
 django-project/
@@ -321,96 +390,50 @@ django-project/
 │   ├── asgi.py
 │   └── wsgi.py
 │
-└── products/
-    ├── __init__.py
-    ├── admin.py
-    ├── apps.py
-    ├── models.py
-    ├── tests.py
-    ├── views.py
-    └── migrations/
-```
-
-Add the app to:
-
-```python
-# config/settings.py
-
-INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-
-    "products",
-]
-```
-
----
-
-# 7. Django Project Structure
-
-Recommended beginner structure:
-
-```text
-project/
-│
-├── manage.py
-│
-├── config/
-│   ├── settings.py
-│   ├── urls.py
-│   ├── asgi.py
-│   └── wsgi.py
-│
 ├── products/
-│   ├── migrations/
+│   ├── __init__.py
 │   ├── admin.py
 │   ├── apps.py
 │   ├── models.py
+│   ├── tests.py
 │   ├── views.py
-│   ├── forms.py
-│   ├── urls.py
-│   └── tests.py
+│   └── migrations/
+│       └── __init__.py
 │
 ├── templates/
-│   ├── base.html
-│   └── products/
-│       ├── list.html
-│       ├── detail.html
-│       ├── create.html
-│       └── update.html
 │
 ├── static/
-│   ├── css/
-│   └── js/
 │
 ├── media/
 │
 ├── requirements.txt
-└── .env
+│
+├── .env
+│
+└── .gitignore
 ```
 
 ---
 
 # 8. Settings
 
-Important settings:
-
 ```python
 # config/settings.py
 
 from pathlib import Path
 
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "change-this-in-production"
+
+SECRET_KEY = "development-only-change-in-production"
+
 
 DEBUG = True
 
+
 ALLOWED_HOSTS = []
+
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -423,34 +446,54 @@ INSTALLED_APPS = [
     "products",
 ]
 
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+
     "django.contrib.sessions.middleware.SessionMiddleware",
+
     "django.middleware.common.CommonMiddleware",
+
     "django.middleware.csrf.CsrfViewMiddleware",
+
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+
     "django.contrib.messages.middleware.MessageMiddleware",
+
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+
 ROOT_URLCONF = "config.urls"
+
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+
+        "DIRS": [
+            BASE_DIR / "templates",
+        ],
+
         "APP_DIRS": True,
+
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.request",
+
                 "django.contrib.auth.context_processors.auth",
+
                 "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
+
 WSGI_APPLICATION = "config.wsgi.application"
+
+ASGI_APPLICATION = "config.asgi.application"
+
 
 DATABASES = {
     "default": {
@@ -459,13 +502,17 @@ DATABASES = {
     }
 }
 
+
 LANGUAGE_CODE = "en-us"
 
+
 TIME_ZONE = "Asia/Phnom_Penh"
+
 
 USE_I18N = True
 
 USE_TZ = True
+
 
 STATIC_URL = "static/"
 
@@ -473,22 +520,19 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
+
+MEDIA_URL = "media/"
+
+MEDIA_ROOT = BASE_DIR / "media"
+
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+LOGIN_REDIRECT_URL = "/"
+
+LOGOUT_REDIRECT_URL = "/"
 ```
-
-## Khmer
-
-`settings.py` គឺជា file សម្រាប់កំណត់ Configuration របស់ Django Project។
-
-ឧទាហរណ៍៖
-
-* Database
-* Installed Apps
-* Middleware
-* Templates
-* Static Files
-* Time Zone
-* Security Settings
 
 ---
 
@@ -504,12 +548,25 @@ from django.urls import include, path
 
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("products/", include("products.urls")),
+    path(
+        "admin/",
+        admin.site.urls,
+    ),
+
+    path(
+        "products/",
+        include("products.urls"),
+    ),
 ]
 ```
 
+## App URL
+
 Create:
+
+```text
+products/urls.py
+```
 
 ```python
 # products/urls.py
@@ -520,56 +577,29 @@ from . import views
 
 
 urlpatterns = [
-    path("", views.product_list, name="product-list"),
-    path("<int:product_id>/", views.product_detail, name="product-detail"),
+    path(
+        "",
+        views.product_list,
+        name="product-list",
+    ),
+
+    path(
+        "<int:product_id>/",
+        views.product_detail,
+        name="product-detail",
+    ),
 ]
-```
-
-## Khmer
-
-URL គឺជាផ្លូវដែលភ្ជាប់ Browser ទៅ View។
-
-ឧទាហរណ៍៖
-
-```text
-/products/
-/products/1/
-/products/2/
 ```
 
 ---
 
 # 10. Views
 
-Create a model first:
-
-```python
-# products/models.py
-
-from django.db import models
-
-
-class Product(models.Model):
-    name = models.CharField(max_length=100)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-
-    def __str__(self):
-        return self.name
-```
-
-Create migrations:
-
-```bash
-python manage.py makemigrations
-python manage.py migrate
-```
-
-View:
-
 ```python
 # products/views.py
 
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
+from django.shortcuts import render
 
 from .models import Product
 
@@ -580,7 +610,9 @@ def product_list(request):
     return render(
         request,
         "products/list.html",
-        {"products": products},
+        {
+            "products": products,
+        },
     )
 
 
@@ -593,7 +625,9 @@ def product_detail(request, product_id):
     return render(
         request,
         "products/detail.html",
-        {"product": product},
+        {
+            "product": product,
+        },
     )
 ```
 
@@ -614,36 +648,52 @@ templates/
 
 ```html
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
     <title>Products</title>
 </head>
+
 <body>
 
-<h1>Products</h1>
+    <h1>Products</h1>
 
-{% for product in products %}
+    {% for product in products %}
 
-    <div>
-        <h2>
-            <a href="{% url 'product-detail' product.id %}">
-                {{ product.name }}
-            </a>
-        </h2>
+        <article>
+
+            <h2>
+                <a
+                    href="{% url 'product-detail' product.id %}"
+                >
+                    {{ product.name }}
+                </a>
+            </h2>
+
+            <p>
+                Price: ${{ product.price }}
+            </p>
+
+        </article>
+
+    {% empty %}
 
         <p>
-            ${{ product.price }}
+            No products found.
         </p>
-    </div>
 
-{% empty %}
-
-    <p>No products found.</p>
-
-{% endfor %}
+    {% endfor %}
 
 </body>
+
 </html>
 ```
 
@@ -651,36 +701,33 @@ templates/
 
 ```html
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+
     <title>{{ product.name }}</title>
 </head>
+
 <body>
 
-<h1>{{ product.name }}</h1>
+    <h1>
+        {{ product.name }}
+    </h1>
 
-<p>Price: ${{ product.price }}</p>
+    <p>
+        Price: ${{ product.price }}
+    </p>
 
-<a href="{% url 'product-list' %}">
-    Back
-</a>
+    <a href="{% url 'product-list' %}">
+        Back to products
+    </a>
 
 </body>
+
 </html>
 ```
-
-## Khmer
-
-Template គឺជា HTML ដែល Django ប្រើសម្រាប់បង្ហាញ Data ពី View។
-
-ឧទាហរណ៍៖
-
-```django
-{{ product.name }}
-```
-
-មានន័យថា បង្ហាញ `name` របស់ Product។
 
 ---
 
@@ -694,33 +741,38 @@ static/
     └── style.css
 ```
 
-CSS:
-
 ```css
+/* static/css/style.css */
+
 body {
     font-family: Arial, sans-serif;
-    margin: 40px;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 30px;
 }
 
 h1 {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
-.product {
-    padding: 20px;
+article {
     border: 1px solid #ddd;
-    margin-bottom: 10px;
+    padding: 20px;
+    margin-bottom: 15px;
 }
 ```
 
-Template:
+Load CSS:
 
 ```html
 {% load static %}
 
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
 
     <link
@@ -729,27 +781,37 @@ Template:
     >
 
     <title>Products</title>
+
 </head>
+
 <body>
 
-<h1>Products</h1>
+    <h1>Products</h1>
 
 </body>
+
 </html>
 ```
+
+Official guide:
+
+[Managing static files](https://docs.djangoproject.com/en/6.0/howto/static-files/)
 
 ---
 
 # 13. Models
 
-A model represents database data.
-
 ```python
+# products/models.py
+
 from django.db import models
 
 
 class Product(models.Model):
-    name = models.CharField(max_length=100)
+
+    name = models.CharField(
+        max_length=100,
+    )
 
     description = models.TextField(
         blank=True,
@@ -772,36 +834,22 @@ class Product(models.Model):
         auto_now=True,
     )
 
+
     def __str__(self):
         return self.name
 ```
 
-Common field types:
+Official documentation:
 
-```python
-models.CharField()
-models.TextField()
-models.IntegerField()
-models.PositiveIntegerField()
-models.DecimalField()
-models.FloatField()
-models.BooleanField()
-models.DateField()
-models.DateTimeField()
-models.EmailField()
-models.URLField()
-models.FileField()
-models.ImageField()
-models.ForeignKey()
-models.OneToOneField()
-models.ManyToManyField()
-```
+[Models](https://docs.djangoproject.com/en/6.0/topics/db/models/)
+
+[Model API Reference](https://docs.djangoproject.com/en/6.0/ref/models/)
 
 ---
 
 # 14. Migrations
 
-After changing models:
+Create migrations:
 
 ```bash
 python manage.py makemigrations
@@ -813,45 +861,40 @@ Apply migrations:
 python manage.py migrate
 ```
 
-See migrations:
+Check migrations:
 
 ```bash
 python manage.py showmigrations
 ```
 
-Migration workflow:
+Migration flow:
 
 ```text
 models.py
-   |
-   v
+    ↓
 makemigrations
-   |
-   v
+    ↓
 migration files
-   |
-   v
+    ↓
 migrate
-   |
-   v
+    ↓
 Database
 ```
 
-## Khmer
+Official documentation:
 
-Migration គឺជាវិធីដែល Django ប្រើដើម្បីបម្លែង Model ក្នុង Python ទៅ Database Schema។
+[Migrations](https://docs.djangoproject.com/en/6.0/topics/migrations/)
 
 ---
 
 # 15. Django ORM
-
-Django ORM lets you work with databases using Python.
 
 ## Create
 
 ```python
 product = Product.objects.create(
     name="Laptop",
+    description="Development laptop",
     price=999.99,
     quantity=10,
 )
@@ -873,7 +916,7 @@ product = Product.objects.get(id=1)
 
 ```python
 products = Product.objects.filter(
-    price__gte=500
+    price__gte=500,
 )
 ```
 
@@ -881,26 +924,16 @@ products = Product.objects.filter(
 
 ```python
 products = Product.objects.exclude(
-    quantity=0
+    quantity=0,
 )
 ```
 
 ## Order
 
 ```python
-products = Product.objects.order_by("-price")
-```
-
-## First
-
-```python
-product = Product.objects.first()
-```
-
-## Last
-
-```python
-product = Product.objects.last()
+products = Product.objects.order_by(
+    "-price",
+)
 ```
 
 ## Count
@@ -913,9 +946,9 @@ total = Product.objects.count()
 
 ```python
 Product.objects.filter(
-    id=1
+    id=1,
 ).update(
-    price=1200
+    price=1200,
 )
 ```
 
@@ -923,9 +956,15 @@ Product.objects.filter(
 
 ```python
 Product.objects.filter(
-    id=1
+    id=1,
 ).delete()
 ```
+
+Official documentation:
+
+[QuerySets](https://docs.djangoproject.com/en/6.0/topics/db/queries/)
+
+[QuerySet API](https://docs.djangoproject.com/en/6.0/ref/models/querysets/)
 
 ---
 
@@ -943,7 +982,7 @@ D = Delete
 ## Create
 
 ```python
-product = Product.objects.create(
+Product.objects.create(
     name="Keyboard",
     price=50,
     quantity=20,
@@ -959,7 +998,9 @@ products = Product.objects.all()
 ## Update
 
 ```python
-product = Product.objects.get(id=1)
+product = Product.objects.get(
+    id=1,
+)
 
 product.price = 60
 
@@ -969,7 +1010,9 @@ product.save()
 ## Delete
 
 ```python
-product = Product.objects.get(id=1)
+product = Product.objects.get(
+    id=1,
+)
 
 product.delete()
 ```
@@ -978,22 +1021,10 @@ product.delete()
 
 # 17. Django Admin
 
-Create admin user:
+Create superuser:
 
 ```bash
 python manage.py createsuperuser
-```
-
-Run server:
-
-```bash
-python manage.py runserver
-```
-
-Open:
-
-```text
-http://127.0.0.1:8000/admin/
 ```
 
 Register model:
@@ -1008,6 +1039,7 @@ from .models import Product
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
+
     list_display = (
         "id",
         "name",
@@ -1026,13 +1058,25 @@ class ProductAdmin(admin.ModelAdmin):
     )
 ```
 
-Django's admin can automatically provide an interface for authenticated users to create, edit, and delete model data.
+Run:
+
+```bash
+python manage.py runserver
+```
+
+Open:
+
+```text
+http://127.0.0.1:8000/admin/
+```
+
+Official documentation:
+
+[Django Admin](https://docs.djangoproject.com/en/6.0/ref/contrib/admin/)
 
 ---
 
 # 18. Forms
-
-Create:
 
 ```python
 # products/forms.py
@@ -1041,6 +1085,7 @@ from django import forms
 
 
 class ProductForm(forms.Form):
+
     name = forms.CharField(
         max_length=100,
     )
@@ -1058,7 +1103,8 @@ class ProductForm(forms.Form):
 View:
 
 ```python
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
+from django.shortcuts import render
 
 from .forms import ProductForm
 from .models import Product
@@ -1068,7 +1114,9 @@ def product_create(request):
 
     if request.method == "POST":
 
-        form = ProductForm(request.POST)
+        form = ProductForm(
+            request.POST,
+        )
 
         if form.is_valid():
 
@@ -1078,7 +1126,9 @@ def product_create(request):
                 quantity=form.cleaned_data["quantity"],
             )
 
-            return redirect("product-list")
+            return redirect(
+                "product-list",
+            )
 
     else:
 
@@ -1087,7 +1137,9 @@ def product_create(request):
     return render(
         request,
         "products/create.html",
-        {"form": form},
+        {
+            "form": form,
+        },
     )
 ```
 
@@ -1109,11 +1161,13 @@ Template:
 </form>
 ```
 
+Official documentation:
+
+[Forms](https://docs.djangoproject.com/en/6.0/topics/forms/)
+
 ---
 
 # 19. ModelForms
-
-For database models, `ModelForm` is often more convenient.
 
 ```python
 # products/forms.py
@@ -1136,10 +1190,11 @@ class ProductForm(forms.ModelForm):
         ]
 ```
 
-Create view:
+View:
 
 ```python
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
+from django.shortcuts import render
 
 from .forms import ProductForm
 
@@ -1148,13 +1203,17 @@ def product_create(request):
 
     if request.method == "POST":
 
-        form = ProductForm(request.POST)
+        form = ProductForm(
+            request.POST,
+        )
 
         if form.is_valid():
 
             form.save()
 
-            return redirect("product-list")
+            return redirect(
+                "product-list",
+            )
 
     else:
 
@@ -1163,7 +1222,9 @@ def product_create(request):
     return render(
         request,
         "products/create.html",
-        {"form": form},
+        {
+            "form": form,
+        },
     )
 ```
 
@@ -1171,16 +1232,17 @@ def product_create(request):
 
 # 20. Validation
 
-Forms can validate user input.
-
 ```python
 from django import forms
+
+from .models import Product
 
 
 class ProductForm(forms.ModelForm):
 
     class Meta:
         model = Product
+
         fields = [
             "name",
             "description",
@@ -1188,38 +1250,23 @@ class ProductForm(forms.ModelForm):
             "quantity",
         ]
 
+
     def clean_price(self):
 
         price = self.cleaned_data["price"]
 
         if price < 0:
+
             raise forms.ValidationError(
-                "Price cannot be negative."
+                "Price cannot be negative.",
             )
 
         return price
 ```
 
-## Model validation
+Official documentation:
 
-```python
-from django.core.validators import MinValueValidator
-
-
-class Product(models.Model):
-
-    name = models.CharField(
-        max_length=100,
-    )
-
-    price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        validators=[
-            MinValueValidator(0),
-        ],
-    )
-```
+[Form validation](https://docs.djangoproject.com/en/6.0/ref/forms/validation/)
 
 ---
 
@@ -1227,27 +1274,32 @@ class Product(models.Model):
 
 Django includes authentication functionality.
 
-Create a login URL:
+URLs:
 
 ```python
 # config/urls.py
 
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
+from django.urls import include
 from django.urls import path
 
 
 urlpatterns = [
-
     path(
         "admin/",
         admin.site.urls,
     ),
 
     path(
+        "products/",
+        include("products.urls"),
+    ),
+
+    path(
         "login/",
         auth_views.LoginView.as_view(
-            template_name="registration/login.html"
+            template_name="registration/login.html",
         ),
         name="login",
     ),
@@ -1260,15 +1312,11 @@ urlpatterns = [
 ]
 ```
 
-Create:
-
-```text
-templates/
-└── registration/
-    └── login.html
-```
+Login template:
 
 ```html
+<!-- templates/registration/login.html -->
+
 <h1>Login</h1>
 
 <form method="post">
@@ -1284,20 +1332,23 @@ templates/
 </form>
 ```
 
-Configure:
+Settings:
 
 ```python
-# settings.py
-
 LOGIN_REDIRECT_URL = "/"
+
 LOGOUT_REDIRECT_URL = "/"
 ```
+
+Official documentation:
+
+[Authentication](https://docs.djangoproject.com/en/6.0/topics/auth/)
 
 ---
 
 # 22. Authorization
 
-Protect a view:
+Function-based view:
 
 ```python
 from django.contrib.auth.decorators import login_required
@@ -1332,29 +1383,23 @@ class DashboardView(
 
 # 23. Sessions
 
-Store data:
+Save:
 
 ```python
-def save_cart(request):
-
-    request.session["cart"] = [
-        1,
-        2,
-        3,
-    ]
+request.session["cart"] = [
+    1,
+    2,
+    3,
+]
 ```
 
 Read:
 
 ```python
-def get_cart(request):
-
-    cart = request.session.get(
-        "cart",
-        [],
-    )
-
-    return cart
+cart = request.session.get(
+    "cart",
+    [],
+)
 ```
 
 Delete:
@@ -1372,11 +1417,13 @@ Clear:
 request.session.flush()
 ```
 
+Official documentation:
+
+[Sessions](https://docs.djangoproject.com/en/6.0/topics/http/sessions/)
+
 ---
 
 # 24. Messages
-
-View:
 
 ```python
 from django.contrib import messages
@@ -1385,14 +1432,16 @@ from django.shortcuts import redirect
 
 def create_product(request):
 
-    # create product
+    # Create product here
 
     messages.success(
         request,
         "Product created successfully.",
     )
 
-    return redirect("product-list")
+    return redirect(
+        "product-list",
+    )
 ```
 
 Template:
@@ -1411,7 +1460,7 @@ Template:
 {% endif %}
 ```
 
-Message types:
+Types:
 
 ```python
 messages.debug()
@@ -1421,25 +1470,13 @@ messages.warning()
 messages.error()
 ```
 
+Official documentation:
+
+[Messages Framework](https://docs.djangoproject.com/en/6.0/ref/contrib/messages/)
+
 ---
 
 # 25. Class-Based Views
-
-Function-based view:
-
-```python
-def product_list(request):
-
-    products = Product.objects.all()
-
-    return render(
-        request,
-        "products/list.html",
-        {"products": products},
-    )
-```
-
-Class-based view:
 
 ```python
 from django.views import View
@@ -1457,7 +1494,9 @@ class ProductListView(View):
         return render(
             request,
             "products/list.html",
-            {"products": products},
+            {
+                "products": products,
+            },
         )
 ```
 
@@ -1482,8 +1521,6 @@ urlpatterns = [
 
 # 26. Generic Views
 
-Django provides generic views to reduce repetitive code.
-
 ## ListView
 
 ```python
@@ -1499,16 +1536,6 @@ class ProductListView(ListView):
     template_name = "products/list.html"
 
     context_object_name = "products"
-```
-
-URL:
-
-```python
-path(
-    "",
-    ProductListView.as_view(),
-    name="product-list",
-)
 ```
 
 ## DetailView
@@ -1551,7 +1578,7 @@ class ProductCreateView(CreateView):
     template_name = "products/create.html"
 
     success_url = reverse_lazy(
-        "product-list"
+        "product-list",
     )
 ```
 
@@ -1578,7 +1605,7 @@ class ProductUpdateView(UpdateView):
     template_name = "products/update.html"
 
     success_url = reverse_lazy(
-        "product-list"
+        "product-list",
     )
 ```
 
@@ -1598,17 +1625,21 @@ class ProductDeleteView(DeleteView):
     template_name = "products/delete.html"
 
     success_url = reverse_lazy(
-        "product-list"
+        "product-list",
     )
 ```
+
+Official documentation:
+
+[Generic Views](https://docs.djangoproject.com/en/6.0/topics/class-based-views/generic-display/)
+
+[Generic Editing Views](https://docs.djangoproject.com/en/6.0/topics/class-based-views/generic-editing/)
 
 ---
 
 # 27. Relationships
 
-## One-to-Many
-
-Example:
+## ForeignKey
 
 ```python
 class Category(models.Model):
@@ -1616,9 +1647,6 @@ class Category(models.Model):
     name = models.CharField(
         max_length=100,
     )
-
-    def __str__(self):
-        return self.name
 
 
 class Product(models.Model):
@@ -1642,14 +1670,16 @@ class Product(models.Model):
 Query:
 
 ```python
-category = Category.objects.get(id=1)
+category = Category.objects.get(
+    id=1,
+)
 
 products = category.products.all()
 ```
 
 ---
 
-## One-to-One
+## OneToOneField
 
 ```python
 class UserProfile(models.Model):
@@ -1667,16 +1697,9 @@ class UserProfile(models.Model):
 
 ---
 
-## Many-to-Many
+## ManyToManyField
 
 ```python
-class Product(models.Model):
-
-    name = models.CharField(
-        max_length=100,
-    )
-
-
 class Tag(models.Model):
 
     name = models.CharField(
@@ -1684,22 +1707,6 @@ class Tag(models.Model):
     )
 
 
-class ProductTag(models.Model):
-
-    product = models.ForeignKey(
-        Product,
-        on_delete=models.CASCADE,
-    )
-
-    tag = models.ForeignKey(
-        Tag,
-        on_delete=models.CASCADE,
-    )
-```
-
-Or use Django's built-in ManyToManyField:
-
-```python
 class Product(models.Model):
 
     name = models.CharField(
@@ -1712,9 +1719,19 @@ class Product(models.Model):
     )
 ```
 
+Official documentation:
+
+[Relationships](https://docs.djangoproject.com/en/6.0/topics/db/examples/)
+
 ---
 
 # 28. File Uploads
+
+Install Pillow:
+
+```bash
+python -m pip install pillow
+```
 
 Model:
 
@@ -1730,12 +1747,6 @@ class Product(models.Model):
         blank=True,
         null=True,
     )
-```
-
-Install Pillow:
-
-```bash
-pip install pillow
 ```
 
 Settings:
@@ -1790,39 +1801,19 @@ Form:
 View:
 
 ```python
-def create_product(request):
-
-    if request.method == "POST":
-
-        form = ProductForm(
-            request.POST,
-            request.FILES,
-        )
-
-        if form.is_valid():
-
-            form.save()
-
-            return redirect(
-                "product-list"
-            )
-
-    else:
-
-        form = ProductForm()
-
-    return render(
-        request,
-        "products/create.html",
-        {"form": form},
-    )
+form = ProductForm(
+    request.POST,
+    request.FILES,
+)
 ```
+
+Official documentation:
+
+[File Uploads](https://docs.djangoproject.com/en/6.0/topics/http/file-uploads/)
 
 ---
 
 # 29. Pagination
-
-View:
 
 ```python
 from django.core.paginator import Paginator
@@ -1841,11 +1832,11 @@ def product_list(request):
     )
 
     page_number = request.GET.get(
-        "page"
+        "page",
     )
 
     page_obj = paginator.get_page(
-        page_number
+        page_number,
     )
 
     return render(
@@ -1862,45 +1853,49 @@ Template:
 ```html
 {% for product in page_obj %}
 
-    <h2>{{ product.name }}</h2>
+    <h2>
+        {{ product.name }}
+    </h2>
 
 {% endfor %}
 
-<div>
 
-    {% if page_obj.has_previous %}
+{% if page_obj.has_previous %}
 
-        <a
-            href="?page={{ page_obj.previous_page_number }}"
-        >
-            Previous
-        </a>
+    <a
+        href="?page={{ page_obj.previous_page_number }}"
+    >
+        Previous
+    </a>
 
-    {% endif %}
+{% endif %}
 
-    <span>
-        Page {{ page_obj.number }}
-        of {{ page_obj.paginator.num_pages }}
-    </span>
 
-    {% if page_obj.has_next %}
+<span>
+    Page {{ page_obj.number }}
+    of
+    {{ page_obj.paginator.num_pages }}
+</span>
 
-        <a
-            href="?page={{ page_obj.next_page_number }}"
-        >
-            Next
-        </a>
 
-    {% endif %}
+{% if page_obj.has_next %}
 
-</div>
+    <a
+        href="?page={{ page_obj.next_page_number }}"
+    >
+        Next
+    </a>
+
+{% endif %}
 ```
+
+Official documentation:
+
+[Pagination](https://docs.djangoproject.com/en/6.0/topics/pagination/)
 
 ---
 
 # 30. Search
-
-Search by product name:
 
 ```python
 from django.db.models import Q
@@ -1922,7 +1917,8 @@ def product_list(request):
 
         products = products.filter(
             Q(name__icontains=query)
-            | Q(description__icontains=query)
+            |
+            Q(description__icontains=query)
         )
 
     return render(
@@ -1958,31 +1954,7 @@ Template:
 
 # 31. Transactions
 
-Use transactions when multiple database operations must succeed together.
-
-```python
-from django.db import transaction
-
-
-@transaction.atomic
-def create_order():
-
-    order = Order.objects.create(
-        customer="Heng",
-    )
-
-    OrderItem.objects.create(
-        order=order,
-        product_id=1,
-        quantity=2,
-    )
-
-    return order
-```
-
-If an exception occurs, Django rolls back the transaction.
-
-Another approach:
+Use transactions when multiple database operations should succeed or fail together.
 
 ```python
 from django.db import transaction
@@ -2005,11 +1977,17 @@ def create_order():
         return order
 ```
 
+If an exception occurs inside the transaction, Django rolls back the transaction.
+
+Official documentation:
+
+[Database Transactions](https://docs.djangoproject.com/en/6.0/topics/db/transactions/)
+
 ---
 
 # 32. Custom Management Commands
 
-Create:
+Structure:
 
 ```text
 products/
@@ -2032,7 +2010,12 @@ class Command(BaseCommand):
 
     help = "Create sample products"
 
-    def handle(self, *args, **options):
+
+    def handle(
+        self,
+        *args,
+        **options,
+    ):
 
         Product.objects.create(
             name="Laptop",
@@ -2048,8 +2031,8 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                "Products created successfully."
-            )
+                "Products created successfully.",
+            ),
         )
 ```
 
@@ -2059,13 +2042,13 @@ Run:
 python manage.py seed_products
 ```
 
+Official documentation:
+
+[Custom Management Commands](https://docs.djangoproject.com/en/6.0/howto/custom-management-commands/)
+
 ---
 
 # 33. Middleware
-
-Middleware processes requests and responses.
-
-Example:
 
 ```python
 # products/middleware.py
@@ -2079,12 +2062,13 @@ class RequestTimeMiddleware:
 
         self.get_response = get_response
 
+
     def __call__(self, request):
 
         start = time.perf_counter()
 
         response = self.get_response(
-            request
+            request,
         )
 
         duration = (
@@ -2092,17 +2076,16 @@ class RequestTimeMiddleware:
         )
 
         print(
-            f"Request took {duration:.4f}s"
+            f"Request took {duration:.4f}s",
         )
 
         return response
 ```
 
-Add to settings:
+Add:
 
 ```python
 MIDDLEWARE = [
-
     "django.middleware.security.SecurityMiddleware",
 
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -2121,17 +2104,13 @@ MIDDLEWARE = [
 ]
 ```
 
-## Khmer
+Official documentation:
 
-Middleware គឺជាស្រទាប់ដែលអាចពិនិត្យ ឬកែប្រែ Request និង Response មុន/ក្រោយ View។
+[Middleware](https://docs.djangoproject.com/en/6.0/topics/http/middleware/)
 
 ---
 
 # 34. Signals
-
-Signals allow one part of Django to notify another part that something happened.
-
-Example:
 
 ```python
 # products/signals.py
@@ -2156,15 +2135,13 @@ def product_created(
     if created:
 
         print(
-            f"Created product: {instance.name}"
+            f"Created product: {instance.name}",
         )
 ```
 
-Import signals in:
+`apps.py`:
 
 ```python
-# products/apps.py
-
 from django.apps import AppConfig
 
 
@@ -2176,38 +2153,29 @@ class ProductsConfig(AppConfig):
 
     name = "products"
 
+
     def ready(self):
 
         from . import signals
 ```
 
+Official documentation:
+
+[Signals](https://docs.djangoproject.com/en/6.0/topics/signals/)
+
 ---
 
 # 35. Custom User Model
 
-For new projects, decide early whether you need a custom user model.
+For a new project, decide early whether you need a custom user model.
 
-Example:
+Create:
 
 ```python
 # accounts/models.py
 
 from django.contrib.auth.models import AbstractUser
-
-
-class User(AbstractUser):
-
-    phone = models.CharField(
-        max_length=30,
-        blank=True,
-    )
-```
-
-Import:
-
-```python
 from django.db import models
-from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
@@ -2233,13 +2201,9 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 ```
 
-Do not hard-code:
+Official documentation:
 
-```python
-from django.contrib.auth.models import User
-```
-
-inside reusable application code when the project supports a custom user model.
+[Customizing Authentication](https://docs.djangoproject.com/en/6.0/topics/auth/customizing/)
 
 ---
 
@@ -2269,13 +2233,15 @@ send_mail(
 )
 ```
 
-For production, configure a real SMTP provider.
+Official documentation:
+
+[Sending Email](https://docs.djangoproject.com/en/6.0/topics/email/)
 
 ---
 
 # 37. JSON API
 
-Django can return JSON without an additional API framework.
+Django can return JSON directly.
 
 ```python
 from django.http import JsonResponse
@@ -2299,7 +2265,7 @@ def product_api(request):
     return JsonResponse(
         {
             "products": data,
-        }
+        },
     )
 ```
 
@@ -2327,6 +2293,10 @@ Response:
 }
 ```
 
+For a full REST API, consider:
+
+[Django REST Framework](https://www.django-rest-framework.org/)
+
 ---
 
 # 38. Async Views
@@ -2341,8 +2311,8 @@ async def async_products(request):
 
     return JsonResponse(
         {
-            "message": "Hello from async Django"
-        }
+            "message": "Hello from async Django",
+        },
     )
 ```
 
@@ -2352,19 +2322,19 @@ URL:
 path(
     "async/",
     views.async_products,
-    name="async",
+    name="async-products",
 )
 ```
 
-Async is useful when your application spends significant time waiting on asynchronous I/O.
+Official documentation:
 
-Do not assume that simply changing every view to `async def` automatically makes database-heavy code faster.
+[Asynchronous Support](https://docs.djangoproject.com/en/6.0/topics/async/)
 
 ---
 
 # 39. Caching
 
-Simple local-memory cache:
+Development cache:
 
 ```python
 CACHES = {
@@ -2372,12 +2342,12 @@ CACHES = {
         "BACKEND": (
             "django.core.cache.backends.locmem.LocMemCache"
         ),
-        "LOCATION": "unique-django-cache",
+        "LOCATION": "django-cache",
     }
 }
 ```
 
-Use cache:
+Set:
 
 ```python
 from django.core.cache import cache
@@ -2394,7 +2364,7 @@ Get:
 
 ```python
 count = cache.get(
-    "product_count"
+    "product_count",
 )
 ```
 
@@ -2402,7 +2372,7 @@ Delete:
 
 ```python
 cache.delete(
-    "product_count"
+    "product_count",
 )
 ```
 
@@ -2418,13 +2388,13 @@ def product_list(request):
     ...
 ```
 
-For production systems with multiple application instances, use an appropriate shared cache such as Redis.
+Official documentation:
+
+[Caching](https://docs.djangoproject.com/en/6.0/topics/cache/)
 
 ---
 
 # 40. Testing
-
-Create tests:
 
 ```python
 # products/tests.py
@@ -2462,7 +2432,9 @@ class ProductViewTest(TestCase):
         )
 
         response = self.client.get(
-            reverse("product-list")
+            reverse(
+                "product-list",
+            ),
         )
 
         self.assertEqual(
@@ -2482,83 +2454,55 @@ Run:
 python manage.py test
 ```
 
-Specific app:
+Run only products:
 
 ```bash
 python manage.py test products
 ```
 
+Official documentation:
+
+[Testing](https://docs.djangoproject.com/en/6.0/topics/testing/)
+
 ---
 
 # 41. Security
 
-Django provides built-in protections for several common web security risks, including:
+Django provides protection for many common web security problems, including:
 
 * CSRF
 * XSS
 * SQL injection
 * Clickjacking
 * Host header validation
-* Session security
-* HTTPS-related configuration
+* Secure cookies
+* HTTPS configuration
 
-Django's official documentation has a dedicated security section covering these areas.
+Official documentation:
+
+[Django Security](https://docs.djangoproject.com/en/6.0/topics/security/)
 
 ## CSRF
 
-Always include:
-
-```django
-{% csrf_token %}
-```
-
-inside POST forms.
-
-Example:
+Always use:
 
 ```html
 <form method="post">
 
     {% csrf_token %}
 
-    <input
-        type="text"
-        name="name"
-    >
-
-    <button type="submit">
-        Save
-    </button>
+    ...
 
 </form>
 ```
 
-## Never expose SECRET_KEY
-
-Bad:
-
-```python
-SECRET_KEY = "my-real-production-secret"
-```
-
-Better:
-
-```python
-import os
-
-
-SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
-```
-
 ## Production DEBUG
 
-Never use:
+Do not use:
 
 ```python
 DEBUG = True
 ```
-
-in production.
 
 Use:
 
@@ -2568,14 +2512,42 @@ DEBUG = False
 
 ## ALLOWED_HOSTS
 
-Example:
-
 ```python
 ALLOWED_HOSTS = [
     "example.com",
     "www.example.com",
 ]
 ```
+
+## HTTPS
+
+Production:
+
+```python
+SECURE_SSL_REDIRECT = True
+
+SESSION_COOKIE_SECURE = True
+
+CSRF_COOKIE_SECURE = True
+```
+
+## HSTS
+
+```python
+SECURE_HSTS_SECONDS = 31536000
+
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+SECURE_HSTS_PRELOAD = True
+```
+
+Run:
+
+```bash
+python manage.py check --deploy
+```
+
+Django's official security documentation specifically recommends HTTPS, secure cookies, HSTS, proper `ALLOWED_HOSTS`, and keeping `SECRET_KEY` secret. [Security in Django](https://docs.djangoproject.com/en/6.0/topics/security/)
 
 ---
 
@@ -2584,7 +2556,7 @@ ALLOWED_HOSTS = [
 Install:
 
 ```bash
-pip install python-dotenv
+python -m pip install python-dotenv
 ```
 
 Create:
@@ -2594,9 +2566,9 @@ Create:
 ```
 
 ```env
-DJANGO_SECRET_KEY=change-me
+DJANGO_SECRET_KEY=change-this-secret
 DJANGO_DEBUG=True
-DATABASE_URL=sqlite:///db.sqlite3
+DATABASE_NAME=db.sqlite3
 ```
 
 Settings:
@@ -2610,9 +2582,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-SECRET_KEY = os.environ.get(
+SECRET_KEY = os.environ[
     "DJANGO_SECRET_KEY"
-)
+]
+
 
 DEBUG = (
     os.environ.get(
@@ -2623,11 +2596,12 @@ DEBUG = (
 )
 ```
 
-Add to `.gitignore`:
+`.gitignore`:
 
 ```gitignore
 .env
 venv/
+.venv/
 __pycache__/
 *.pyc
 db.sqlite3
@@ -2642,7 +2616,7 @@ staticfiles/
 Install PostgreSQL driver:
 
 ```bash
-pip install psycopg[binary]
+python -m pip install "psycopg[binary]"
 ```
 
 Settings:
@@ -2651,28 +2625,31 @@ Settings:
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
+
         "NAME": "mydatabase",
+
         "USER": "postgres",
+
         "PASSWORD": "your-password",
+
         "HOST": "localhost",
+
         "PORT": "5432",
     }
 }
 ```
 
-Run:
+Then:
 
 ```bash
 python manage.py migrate
 ```
 
-Create superuser:
+Official documentation:
 
-```bash
-python manage.py createsuperuser
-```
+[PostgreSQL Notes](https://docs.djangoproject.com/en/6.0/ref/databases/#postgresql-notes)
 
-For production, keep database credentials in environment variables rather than committing them to Git.
+Django officially supports PostgreSQL, MariaDB, MySQL, SQLite, and Oracle.
 
 ---
 
@@ -2683,42 +2660,61 @@ Example:
 ```python
 DEBUG = False
 
+
 ALLOWED_HOSTS = [
     "example.com",
     "www.example.com",
 ]
+
 
 CSRF_TRUSTED_ORIGINS = [
     "https://example.com",
     "https://www.example.com",
 ]
 
+
 SECURE_SSL_REDIRECT = True
+
 
 SESSION_COOKIE_SECURE = True
 
+
 CSRF_COOKIE_SECURE = True
+
 
 SECURE_HSTS_SECONDS = 31536000
 
+
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
+
 SECURE_HSTS_PRELOAD = True
+
 
 X_FRAME_OPTIONS = "DENY"
 ```
 
-Before deploying, run:
+Check:
 
 ```bash
 python manage.py check --deploy
 ```
 
+Official documentation:
+
+[Deployment Checklist](https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/)
+
 ---
 
 # 45. Static Files in Production
 
-Configure:
+Development:
+
+```python
+STATIC_URL = "/static/"
+```
+
+Production:
 
 ```python
 STATIC_URL = "/static/"
@@ -2732,42 +2728,42 @@ Collect:
 python manage.py collectstatic
 ```
 
-Django's deployment documentation covers deployment and static-file handling as separate production concerns.
+Official documentation:
 
-Do not use Django's development server for production.
+[Deploying Static Files](https://docs.djangoproject.com/en/6.0/howto/static-files/deployment/)
 
 ---
 
 # 46. Deployment
 
-A common production architecture:
+Typical architecture:
 
 ```text
 Internet
-   |
-   v
+    |
+    v
 Nginx
-   |
-   v
-Gunicorn
-   |
-   v
+    |
+    v
+Gunicorn / Uvicorn
+    |
+    v
 Django
-   |
-   +------ PostgreSQL
-   |
-   +------ Redis
-   |
-   +------ Object Storage
+    |
+    +-------- PostgreSQL
+    |
+    +-------- Redis
+    |
+    +-------- Object Storage
 ```
 
 Install Gunicorn:
 
 ```bash
-pip install gunicorn
+python -m pip install gunicorn
 ```
 
-Run:
+Run WSGI:
 
 ```bash
 gunicorn config.wsgi:application
@@ -2781,29 +2777,49 @@ gunicorn \
     config.asgi:application
 ```
 
-The exact deployment setup depends on the hosting platform.
+Important:
+
+```bash
+python manage.py runserver
+```
+
+is for development and should not be used as your production server.
+
+Official documentation:
+
+[Deploying Django](https://docs.djangoproject.com/en/6.0/howto/deployment/)
+
+[WSGI Deployment](https://docs.djangoproject.com/en/6.0/howto/deployment/wsgi/)
+
+[ASGI Deployment](https://docs.djangoproject.com/en/6.0/howto/deployment/asgi/)
 
 ---
 
 # 47. Performance Optimization
 
-## Use select_related
+## `select_related()`
 
-For ForeignKey / OneToOne relationships:
+Use for:
+
+* ForeignKey
+* OneToOneField
 
 ```python
 products = Product.objects.select_related(
-    "category"
+    "category",
 )
 ```
 
-## Use prefetch_related
+## `prefetch_related()`
 
-For ManyToMany / reverse relationships:
+Use for:
+
+* ManyToManyField
+* Reverse relationships
 
 ```python
 products = Product.objects.prefetch_related(
-    "tags"
+    "tags",
 )
 ```
 
@@ -2814,38 +2830,26 @@ products = Product.objects.all()
 
 for product in products:
 
-    print(product.category.name)
+    print(
+        product.category.name,
+    )
 ```
-
-This can cause unnecessary database queries.
 
 ## Better
 
 ```python
 products = Product.objects.select_related(
-    "category"
+    "category",
 )
 
 for product in products:
 
-    print(product.category.name)
+    print(
+        product.category.name,
+    )
 ```
 
----
-
-## Only select required fields
-
-```python
-products = Product.objects.only(
-    "id",
-    "name",
-    "price",
-)
-```
-
----
-
-## Use indexes
+## Index
 
 ```python
 class Product(models.Model):
@@ -2865,23 +2869,28 @@ class Product(models.Model):
         max_length=100,
     )
 
+
     class Meta:
 
         indexes = [
             models.Index(
-                fields=["name"]
+                fields=["name"],
             ),
         ]
 ```
 
+Official documentation:
+
+[Optimize Database Access](https://docs.djangoproject.com/en/6.0/topics/db/optimization/)
+
 ---
 
-# 48. Project Structure for Large Applications
+# 48. Large Project Structure
 
-For larger projects:
+For a large application:
 
 ```text
-project/
+django-shop/
 │
 ├── manage.py
 │
@@ -2901,30 +2910,25 @@ project/
 │   │   ├── migrations/
 │   │   ├── admin.py
 │   │   ├── apps.py
+│   │   ├── forms.py
 │   │   ├── models.py
 │   │   ├── urls.py
 │   │   ├── views.py
-│   │   ├── forms.py
 │   │   └── tests/
 │   │
 │   ├── products/
 │   │   ├── migrations/
 │   │   ├── admin.py
 │   │   ├── apps.py
+│   │   ├── forms.py
 │   │   ├── models.py
 │   │   ├── urls.py
 │   │   ├── views.py
-│   │   ├── forms.py
 │   │   └── tests/
 │   │
-│   └── orders/
-│       ├── migrations/
-│       ├── admin.py
-│       ├── apps.py
-│       ├── models.py
-│       ├── urls.py
-│       ├── views.py
-│       └── tests/
+│   ├── orders/
+│   ├── payments/
+│   └── inventory/
 │
 ├── templates/
 ├── static/
@@ -2934,11 +2938,9 @@ project/
 └── .gitignore
 ```
 
-## Khmer
+### 🇰🇭 Khmer
 
-Project តូចអាចប្រើ structure ធម្មតា។
-
-Project ធំគួរបែងចែកជា apps ដូចជា៖
+Project ធំគួរបែងចែកជា apps:
 
 ```text
 accounts
@@ -2949,11 +2951,17 @@ inventory
 reports
 ```
 
-វាធ្វើឱ្យ code ងាយថែទាំ និងងាយពង្រីក។
+ដើម្បីឱ្យ project ងាយ:
+
+* Maintain
+* Test
+* Debug
+* Scale
+* Collaborate
 
 ---
 
-# 49. Useful Django Commands
+# 49. Useful Commands
 
 ## Create project
 
@@ -2991,19 +2999,19 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-## Open Django shell
+## Django shell
 
 ```bash
 python manage.py shell
 ```
 
-## Run tests
+## Test
 
 ```bash
 python manage.py test
 ```
 
-## Check project
+## Check
 
 ```bash
 python manage.py check
@@ -3015,7 +3023,7 @@ python manage.py check
 python manage.py check --deploy
 ```
 
-## Collect static files
+## Collect static
 
 ```bash
 python manage.py collectstatic
@@ -3027,7 +3035,7 @@ python manage.py collectstatic
 python manage.py showmigrations
 ```
 
-## Show Django version
+## Django version
 
 ```bash
 python -m django --version
@@ -3037,9 +3045,20 @@ python -m django --version
 
 # 50. Complete Mini Project
 
-Now let's combine the important beginner/intermediate concepts.
+This example combines:
 
-## Project
+* Model
+* ORM
+* CRUD
+* Forms
+* Templates
+* URLs
+* Admin
+* Search
+* Messages
+* CSS
+
+## Project Structure
 
 ```text
 django-shop/
@@ -3081,7 +3100,7 @@ django-shop/
 
 ---
 
-## Step 1 — Create project
+## 50.1 Create Project
 
 ```bash
 mkdir django-shop
@@ -3105,19 +3124,139 @@ source venv/bin/activate
 Install:
 
 ```bash
-pip install django
+python -m pip install --upgrade pip
+
+python -m pip install "Django>=6.0,<6.1"
 ```
 
-Create:
+Create project:
 
 ```bash
 django-admin startproject config .
+```
+
+Create app:
+
+```bash
 python manage.py startapp products
 ```
 
 ---
 
-## Step 2 — Model
+## 50.2 Settings
+
+```python
+# config/settings.py
+
+from pathlib import Path
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+SECRET_KEY = "development-secret-key"
+
+
+DEBUG = True
+
+
+ALLOWED_HOSTS = []
+
+
+INSTALLED_APPS = [
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+
+    "products",
+]
+
+
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+
+    "django.contrib.sessions.middleware.SessionMiddleware",
+
+    "django.middleware.common.CommonMiddleware",
+
+    "django.middleware.csrf.CsrfViewMiddleware",
+
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+
+    "django.contrib.messages.middleware.MessageMiddleware",
+
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+
+
+ROOT_URLCONF = "config.urls"
+
+
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+
+        "DIRS": [
+            BASE_DIR / "templates",
+        ],
+
+        "APP_DIRS": True,
+
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.request",
+
+                "django.contrib.auth.context_processors.auth",
+
+                "django.contrib.messages.context_processors.messages",
+            ],
+        },
+    },
+]
+
+
+WSGI_APPLICATION = "config.wsgi.application"
+
+ASGI_APPLICATION = "config.asgi.application"
+
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
+
+
+LANGUAGE_CODE = "en-us"
+
+
+TIME_ZONE = "Asia/Phnom_Penh"
+
+
+USE_I18N = True
+
+USE_TZ = True
+
+
+STATIC_URL = "static/"
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+
+DEFAULT_AUTO_FIELD = (
+    "django.db.models.BigAutoField"
+)
+```
+
+---
+
+## 50.3 Model
 
 ```python
 # products/models.py
@@ -3152,6 +3291,7 @@ class Product(models.Model):
         auto_now=True,
     )
 
+
     def __str__(self):
 
         return self.name
@@ -3159,7 +3299,7 @@ class Product(models.Model):
 
 ---
 
-## Step 3 — Form
+## 50.4 Form
 
 ```python
 # products/forms.py
@@ -3185,17 +3325,16 @@ class ProductForm(forms.ModelForm):
 
 ---
 
-## Step 4 — Views
+## 50.5 Views
 
 ```python
 # products/views.py
 
 from django.contrib import messages
-from django.shortcuts import (
-    get_object_or_404,
-    redirect,
-    render,
-)
+from django.db.models import Q
+from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
+from django.shortcuts import render
 
 from .forms import ProductForm
 from .models import Product
@@ -3213,7 +3352,9 @@ def product_list(request):
     if query:
 
         products = products.filter(
-            name__icontains=query
+            Q(name__icontains=query)
+            |
+            Q(description__icontains=query)
         )
 
     return render(
@@ -3250,7 +3391,7 @@ def product_create(request):
     if request.method == "POST":
 
         form = ProductForm(
-            request.POST
+            request.POST,
         )
 
         if form.is_valid():
@@ -3263,7 +3404,7 @@ def product_create(request):
             )
 
             return redirect(
-                "product-list"
+                "product-list",
             )
 
     else:
@@ -3299,7 +3440,7 @@ def product_delete(
         )
 
         return redirect(
-            "product-list"
+            "product-list",
         )
 
     return render(
@@ -3313,7 +3454,7 @@ def product_delete(
 
 ---
 
-## Step 5 — URLs
+## 50.6 URLs
 
 ```python
 # products/urls.py
@@ -3324,7 +3465,6 @@ from . import views
 
 
 urlpatterns = [
-
     path(
         "",
         views.product_list,
@@ -3332,15 +3472,15 @@ urlpatterns = [
     ),
 
     path(
-        "<int:product_id>/",
-        views.product_detail,
-        name="product-detail",
-    ),
-
-    path(
         "create/",
         views.product_create,
         name="product-create",
+    ),
+
+    path(
+        "<int:product_id>/",
+        views.product_detail,
+        name="product-detail",
     ),
 
     path(
@@ -3357,11 +3497,11 @@ Main URL:
 # config/urls.py
 
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include
+from django.urls import path
 
 
 urlpatterns = [
-
     path(
         "admin/",
         admin.site.urls,
@@ -3376,7 +3516,7 @@ urlpatterns = [
 
 ---
 
-## Step 6 — Admin
+## 50.7 Admin
 
 ```python
 # products/admin.py
@@ -3405,11 +3545,15 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = (
         "created_at",
     )
+
+    ordering = (
+        "-created_at",
+    )
 ```
 
 ---
 
-## Step 7 — Base Template
+## 50.8 Base Template
 
 ```html
 <!-- templates/base.html -->
@@ -3446,11 +3590,15 @@ class ProductAdmin(admin.ModelAdmin):
 
     <nav>
 
-        <a href="{% url 'product-list' %}">
+        <a
+            href="{% url 'product-list' %}"
+        >
             Products
         </a>
 
-        <a href="{% url 'product-create' %}">
+        <a
+            href="{% url 'product-create' %}"
+        >
             Create Product
         </a>
 
@@ -3459,6 +3607,7 @@ class ProductAdmin(admin.ModelAdmin):
         </a>
 
     </nav>
+
 
     {% if messages %}
 
@@ -3471,6 +3620,7 @@ class ProductAdmin(admin.ModelAdmin):
         {% endfor %}
 
     {% endif %}
+
 
     <main>
 
@@ -3486,7 +3636,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 ---
 
-## Step 8 — Product List
+## 50.9 Product List
 
 ```html
 <!-- templates/products/list.html -->
@@ -3497,9 +3647,13 @@ class ProductAdmin(admin.ModelAdmin):
 Products
 {% endblock %}
 
+
 {% block content %}
 
-<h1>Products</h1>
+<h1>
+    Products
+</h1>
+
 
 <form method="get">
 
@@ -3507,7 +3661,7 @@ Products
         type="search"
         name="q"
         value="{{ query }}"
-        placeholder="Search..."
+        placeholder="Search products..."
     >
 
     <button type="submit">
@@ -3516,7 +3670,9 @@ Products
 
 </form>
 
+
 <hr>
+
 
 {% for product in products %}
 
@@ -3532,12 +3688,21 @@ Products
 
         </h2>
 
+
         <p>
+            {{ product.description }}
+        </p>
+
+
+        <p>
+            Price:
             ${{ product.price }}
         </p>
 
+
         <p>
-            Quantity: {{ product.quantity }}
+            Quantity:
+            {{ product.quantity }}
         </p>
 
     </article>
@@ -3550,21 +3715,24 @@ Products
 
 {% endfor %}
 
+
 {% endblock %}
 ```
 
 ---
 
-## Step 9 — Product Detail
+## 50.10 Product Detail
 
 ```html
 <!-- templates/products/detail.html -->
 
 {% extends "base.html" %}
 
+
 {% block title %}
 {{ product.name }}
 {% endblock %}
+
 
 {% block content %}
 
@@ -3572,17 +3740,23 @@ Products
     {{ product.name }}
 </h1>
 
+
 <p>
     {{ product.description }}
 </p>
 
-<p>
-    Price: ${{ product.price }}
-</p>
 
 <p>
-    Quantity: {{ product.quantity }}
+    Price:
+    ${{ product.price }}
 </p>
+
+
+<p>
+    Quantity:
+    {{ product.quantity }}
+</p>
+
 
 <a
     href="{% url 'product-list' %}"
@@ -3590,7 +3764,6 @@ Products
     Back
 </a>
 
-|
 
 <a
     href="{% url 'product-delete' product.id %}"
@@ -3603,16 +3776,18 @@ Products
 
 ---
 
-## Step 10 — Create Product
+## 50.11 Create Product
 
 ```html
 <!-- templates/products/create.html -->
 
 {% extends "base.html" %}
 
+
 {% block title %}
 Create Product
 {% endblock %}
+
 
 {% block content %}
 
@@ -3620,11 +3795,13 @@ Create Product
     Create Product
 </h1>
 
+
 <form method="post">
 
     {% csrf_token %}
 
     {{ form.as_p }}
+
 
     <button type="submit">
         Create
@@ -3637,16 +3814,18 @@ Create Product
 
 ---
 
-## Step 11 — Delete Product
+## 50.12 Delete Product
 
 ```html
 <!-- templates/products/delete.html -->
 
 {% extends "base.html" %}
 
+
 {% block title %}
 Delete Product
 {% endblock %}
+
 
 {% block content %}
 
@@ -3654,18 +3833,22 @@ Delete Product
     Delete Product
 </h1>
 
+
 <p>
     Are you sure you want to delete
     "{{ product.name }}"?
 </p>
 
+
 <form method="post">
 
     {% csrf_token %}
 
+
     <button type="submit">
         Yes, Delete
     </button>
+
 
     <a
         href="{% url 'product-detail' product.id %}"
@@ -3680,55 +3863,106 @@ Delete Product
 
 ---
 
-## Step 12 — CSS
+## 50.13 CSS
 
 ```css
 /* static/css/style.css */
 
+* {
+    box-sizing: border-box;
+}
+
+
 body {
     font-family: Arial, sans-serif;
+
     max-width: 1000px;
+
     margin: 0 auto;
+
     padding: 30px;
+
+    line-height: 1.6;
 }
+
 
 nav {
     display: flex;
+
     gap: 20px;
+
     margin-bottom: 30px;
+
+    padding-bottom: 20px;
+
+    border-bottom: 1px solid #ddd;
 }
+
+
+nav a {
+    text-decoration: none;
+}
+
 
 article {
-    border: 1px solid #ddd;
     padding: 20px;
+
     margin-bottom: 15px;
+
+    border: 1px solid #ddd;
+
+    border-radius: 8px;
 }
 
-.message {
+
+input {
     padding: 10px;
+
+    width: 300px;
+}
+
+
+button {
+    padding: 10px 16px;
+
+    cursor: pointer;
+}
+
+
+.message {
+    padding: 12px;
+
     margin-bottom: 20px;
-    background: #eee;
+
+    border: 1px solid #ddd;
+
+    border-radius: 6px;
 }
 ```
 
 ---
 
-## Step 13 — Database
-
-Run:
+## 50.14 Migrate
 
 ```bash
 python manage.py makemigrations
+```
+
+```bash
 python manage.py migrate
 ```
 
-Create admin:
+---
+
+## 50.15 Create Admin User
 
 ```bash
 python manage.py createsuperuser
 ```
 
-Start:
+---
+
+## 50.16 Run
 
 ```bash
 python manage.py runserver
@@ -3748,34 +3982,18 @@ http://127.0.0.1:8000/admin/
 
 ---
 
-# 51. requirements.txt
+# 51. GitHub Workflow
 
-Generate:
-
-```bash
-pip freeze > requirements.txt
-```
-
-Example:
-
-```text
-Django==6.0
-```
-
-Install dependencies later:
+Initialize Git:
 
 ```bash
-pip install -r requirements.txt
+git init
 ```
 
----
-
-# 52. .gitignore
-
-Recommended:
+Create `.gitignore`:
 
 ```gitignore
-# Virtual environment
+# Virtual environments
 venv/
 .venv/
 
@@ -3800,14 +4018,10 @@ staticfiles/
 Thumbs.db
 ```
 
----
-
-# 53. GitHub Workflow
-
-Initialize Git:
+Create requirements:
 
 ```bash
-git init
+python -m pip freeze > requirements.txt
 ```
 
 Add files:
@@ -3822,16 +4036,16 @@ Commit:
 git commit -m "Initial Django project"
 ```
 
-Create branch:
+Rename branch:
 
 ```bash
 git branch -M main
 ```
 
-Add remote:
+Add GitHub repository:
 
 ```bash
-git remote add origin YOUR_GITHUB_REPOSITORY_URL
+git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
 ```
 
 Push:
@@ -3842,662 +4056,322 @@ git push -u origin main
 
 ---
 
-# 54. Recommended Development Workflow
-
-Every time you change a model:
-
-```bash
-python manage.py makemigrations
-python manage.py migrate
-```
-
-Before committing:
-
-```bash
-python manage.py check
-python manage.py test
-```
-
-Before production:
-
-```bash
-python manage.py check --deploy
-python manage.py collectstatic
-```
-
----
-
-# 55. Django Development Flow
-
-A typical request:
-
-```text
-Browser
-   |
-   v
-URL
-   |
-   v
-URLconf
-   |
-   v
-View
-   |
-   +--------> Model
-   |             |
-   |             v
-   |          Database
-   |
-   v
-Template
-   |
-   v
-HTTP Response
-   |
-   v
-Browser
-```
-
-Example:
-
-```text
-GET /products/
-       |
-       v
-products.urls
-       |
-       v
-product_list()
-       |
-       v
-Product.objects.all()
-       |
-       v
-Database
-       |
-       v
-products/list.html
-       |
-       v
-HTML
-```
-
----
-
-# 56. Beginner → Advanced Roadmap
+# 52. Learning Roadmap
 
 ## 🟢 Beginner
 
-Learn:
+Learn in this order:
 
 ```text
-1. Python
-2. Virtual environments
-3. Django installation
-4. Project
-5. App
-6. URLs
-7. Views
-8. Templates
-9. Static files
-10. Models
-11. Migrations
-12. Admin
+Python
+    ↓
+HTTP Basics
+    ↓
+Django Installation
+    ↓
+Project
+    ↓
+App
+    ↓
+URLs
+    ↓
+Views
+    ↓
+Templates
+    ↓
+Static Files
+    ↓
+Models
+    ↓
+Migrations
+    ↓
+Admin
 ```
 
 ---
 
 ## 🟡 Intermediate
 
-Learn:
-
 ```text
-13. Forms
-14. ModelForms
-15. Validation
-16. CRUD
-17. Authentication
-18. Authorization
-19. Sessions
-20. Messages
-21. Class-Based Views
-22. Generic Views
-23. Relationships
-24. File Uploads
-25. Pagination
-26. Search
-27. Transactions
-28. Email
+Forms
+    ↓
+ModelForms
+    ↓
+Validation
+    ↓
+CRUD
+    ↓
+Authentication
+    ↓
+Authorization
+    ↓
+Sessions
+    ↓
+Messages
+    ↓
+Class-Based Views
+    ↓
+Generic Views
+    ↓
+Relationships
+    ↓
+File Uploads
+    ↓
+Pagination
+    ↓
+Search
+    ↓
+Transactions
 ```
 
 ---
 
 ## 🔴 Advanced
 
-Learn:
-
 ```text
-29. Custom User Model
-30. Middleware
-31. Signals
-32. Async Views
-33. Caching
-34. Query Optimization
-35. select_related
-36. prefetch_related
-37. Database indexes
-38. Testing
-39. Security
-40. PostgreSQL
-41. Environment Variables
-42. Production Settings
-43. Static Deployment
-44. Gunicorn
-45. Nginx
-46. Redis
-47. Background Tasks
-48. Docker
-49. CI/CD
-50. Cloud Deployment
-```
-
----
-
-# 57. Recommended Django Learning Order
-
-The best order is:
-
-```text
-Python
-  ↓
-HTTP Basics
-  ↓
-Django Project
-  ↓
-URLs
-  ↓
-Views
-  ↓
-Templates
-  ↓
-Models
-  ↓
-ORM
-  ↓
-Migrations
-  ↓
-Admin
-  ↓
-Forms
-  ↓
-CRUD
-  ↓
-Authentication
-  ↓
-Authorization
-  ↓
-Relationships
-  ↓
-Class-Based Views
-  ↓
-Testing
-  ↓
-Security
-  ↓
-PostgreSQL
-  ↓
+Custom User Model
+    ↓
+Middleware
+    ↓
+Signals
+    ↓
+Async
+    ↓
 Caching
-  ↓
-Optimization
-  ↓
-Deployment
-  ↓
-Docker
-  ↓
-CI/CD
-```
-
----
-
-# 58. Django Best Practices
-
-## 1. Use a virtual environment
-
-```bash
-python -m venv venv
-```
-
-## 2. Never commit `.env`
-
-```gitignore
-.env
-```
-
-## 3. Never expose production SECRET_KEY
-
-```python
-SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
-```
-
-## 4. Keep `DEBUG=False` in production
-
-```python
-DEBUG = False
-```
-
-## 5. Use PostgreSQL for serious production applications
-
-```text
-SQLite
-   ↓
-Learning / small projects
-
+    ↓
+Query Optimization
+    ↓
+Database Indexes
+    ↓
+Testing
+    ↓
+Security
+    ↓
 PostgreSQL
-   ↓
-Production / larger applications
-```
-
-## 6. Write tests
-
-```bash
-python manage.py test
-```
-
-## 7. Optimize database queries
-
-Use:
-
-```python
-select_related()
-```
-
-and:
-
-```python
-prefetch_related()
-```
-
-when appropriate.
-
-## 8. Keep apps focused
-
-Good:
-
-```text
-accounts
-products
-orders
-payments
-inventory
-```
-
-Avoid putting everything into one giant app.
-
----
-
-# 59. Common Mistakes
-
-## Mistake 1 — Forgetting migrations
-
-Wrong:
-
-```bash
-python manage.py makemigrations
-```
-
-but never:
-
-```bash
-python manage.py migrate
-```
-
-Correct:
-
-```bash
-python manage.py makemigrations
-python manage.py migrate
+    ↓
+Redis
+    ↓
+Background Tasks
+    ↓
+Docker
+    ↓
+CI/CD
+    ↓
+Production Deployment
 ```
 
 ---
 
-## Mistake 2 — Forgetting CSRF
+# 53. Official Documentation
 
-Wrong:
+## Django
 
-```html
-<form method="post">
-```
+* [Django Official Website](https://www.djangoproject.com/)
+* [Django 6.0 Documentation](https://docs.djangoproject.com/en/6.0/)
+* [Django 6.0 Installation](https://docs.djangoproject.com/en/6.0/intro/install/)
+* [Django Tutorial](https://docs.djangoproject.com/en/6.0/intro/tutorial01/)
+* [Django Models](https://docs.djangoproject.com/en/6.0/topics/db/models/)
+* [Django Queries](https://docs.djangoproject.com/en/6.0/topics/db/queries/)
+* [Django Forms](https://docs.djangoproject.com/en/6.0/topics/forms/)
+* [Django Authentication](https://docs.djangoproject.com/en/6.0/topics/auth/)
+* [Django Sessions](https://docs.djangoproject.com/en/6.0/topics/http/sessions/)
+* [Django Class-Based Views](https://docs.djangoproject.com/en/6.0/topics/class-based-views/)
+* [Django File Uploads](https://docs.djangoproject.com/en/6.0/topics/http/file-uploads/)
+* [Django Pagination](https://docs.djangoproject.com/en/6.0/topics/pagination/)
+* [Django Middleware](https://docs.djangoproject.com/en/6.0/topics/http/middleware/)
+* [Django Signals](https://docs.djangoproject.com/en/6.0/topics/signals/)
+* [Django Async](https://docs.djangoproject.com/en/6.0/topics/async/)
+* [Django Caching](https://docs.djangoproject.com/en/6.0/topics/cache/)
+* [Django Testing](https://docs.djangoproject.com/en/6.0/topics/testing/)
+* [Django Security](https://docs.djangoproject.com/en/6.0/topics/security/)
+* [Django Deployment](https://docs.djangoproject.com/en/6.0/howto/deployment/)
+* [Django Deployment Checklist](https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/)
+* [Django Static Files](https://docs.djangoproject.com/en/6.0/howto/static-files/)
+* [Django PostgreSQL](https://docs.djangoproject.com/en/6.0/ref/databases/#postgresql-notes)
 
-Correct:
+## Python
 
-```html
-<form method="post">
+* [Python Official Website](https://www.python.org/)
+* [Python Documentation](https://docs.python.org/3/)
 
-    {% csrf_token %}
+## Git
 
-</form>
-```
+* [Git Official Website](https://git-scm.com/)
+* [Git Documentation](https://git-scm.com/doc)
 
----
+## Django REST Framework
 
-## Mistake 3 — Using development server in production
-
-Do not deploy production traffic using:
-
-```bash
-python manage.py runserver
-```
-
-Use an appropriate production server architecture instead.
-
----
-
-## Mistake 4 — Hard-coding secrets
-
-Bad:
-
-```python
-PASSWORD = "123456"
-```
-
-Good:
-
-```python
-PASSWORD = os.environ["DATABASE_PASSWORD"]
-```
-
----
-
-## Mistake 5 — N+1 database queries
-
-Bad:
-
-```python
-products = Product.objects.all()
-
-for product in products:
-
-    print(product.category.name)
-```
-
-Better:
-
-```python
-products = Product.objects.select_related(
-    "category"
-)
-```
-
----
-
-# 60. Useful Django Concepts
-
-| Concept        | Purpose                        |
-| -------------- | ------------------------------ |
-| Project        | Whole Django application       |
-| App            | Feature/module                 |
-| URL            | Route                          |
-| View           | Request logic                  |
-| Model          | Database structure             |
-| ORM            | Database interaction           |
-| Template       | HTML presentation              |
-| Form           | User input                     |
-| ModelForm      | Model-based form               |
-| Migration      | Database schema changes        |
-| Admin          | Data management                |
-| Middleware     | Request/response processing    |
-| Signal         | Event notification             |
-| Session        | User-specific server-side data |
-| Cache          | Temporary fast data            |
-| QuerySet       | Database query representation  |
-| Manager        | Model query interface          |
-| Authentication | Who are you?                   |
-| Authorization  | What can you do?               |
-
----
-
-# 61. Final Checklist
-
-Before calling your Django project complete:
-
-```text
-[ ] Virtual environment created
-[ ] Django installed
-[ ] Project created
-[ ] Apps organized
-[ ] URLs configured
-[ ] Views implemented
-[ ] Templates implemented
-[ ] Static files configured
-[ ] Models created
-[ ] Migrations applied
-[ ] Admin configured
-[ ] Forms validated
-[ ] CRUD completed
-[ ] Authentication implemented
-[ ] Authorization implemented
-[ ] Tests written
-[ ] Security reviewed
-[ ] SECRET_KEY protected
-[ ] DEBUG=False in production
-[ ] ALLOWED_HOSTS configured
-[ ] PostgreSQL configured
-[ ] Static files collected
-[ ] Production server configured
-[ ] Logs configured
-[ ] Git repository created
-[ ] .gitignore configured
-[ ] README written
-```
-
----
-
-# 62. Quick Reference
-
-## Start project
-
-```bash
-django-admin startproject config .
-```
-
-## Create app
-
-```bash
-python manage.py startapp products
-```
-
-## Run
-
-```bash
-python manage.py runserver
-```
-
-## Migrations
-
-```bash
-python manage.py makemigrations
-python manage.py migrate
-```
-
-## Admin
-
-```bash
-python manage.py createsuperuser
-```
-
-## Shell
-
-```bash
-python manage.py shell
-```
-
-## Test
-
-```bash
-python manage.py test
-```
-
-## Production check
-
-```bash
-python manage.py check --deploy
-```
-
-## Static files
-
-```bash
-python manage.py collectstatic
-```
-
----
-
-# 63. Official Documentation
-
-The official Django documentation is the best reference for version-specific behavior.
-
-* Django 6.0 Documentation
-* Django Tutorial
-* Django Models
-* Django ORM
-* Django Forms
-* Django Authentication
-* Django Security
-* Django Testing
-* Django Deployment
-
-Always use documentation matching the Django version installed in your project.
+* [Django REST Framework](https://www.django-rest-framework.org/)
 
 ---
 
 # 🎯 Final Goal
 
-After completing this guide, you should be able to build applications such as:
+After learning this guide, you should be able to build:
 
 ```text
-Authentication System
-        +
-Product Management
-        +
-Inventory Management
-        +
-Order Management
-        +
-Payment Integration
-        +
-REST API
-        +
-PostgreSQL
-        +
-Redis
-        +
-Background Jobs
-        +
-Testing
-        +
-Docker
-        +
-CI/CD
-        +
-Production Deployment
+                    Django
+                       │
+          ┌────────────┼────────────┐
+          │            │            │
+          ▼            ▼            ▼
+    Authentication   Products     Orders
+          │            │            │
+          └────────────┼────────────┘
+                       │
+                       ▼
+                  PostgreSQL
+                       │
+                       ▼
+                     Redis
+                       │
+                       ▼
+                  REST API
+                       │
+                       ▼
+                    Testing
+                       │
+                       ▼
+                    Docker
+                       │
+                       ▼
+                    CI/CD
+                       │
+                       ▼
+                  Production
 ```
 
-A professional Django application can be organized around:
+Possible projects:
 
 ```text
-Frontend
-   |
-   v
-Django
-   |
-   +---- Authentication
-   |
-   +---- Business Logic
-   |
-   +---- REST API
-   |
-   +---- PostgreSQL
-   |
-   +---- Redis
-   |
-   +---- Background Workers
-   |
-   +---- Object Storage
-   |
-   v
-Production
+1. Blog
+2. Authentication System
+3. Product CRUD
+4. Inventory System
+5. Order Management
+6. E-Commerce
+7. REST API
+8. Inventory + API
+9. Dockerized Django
+10. Production E-Commerce
 ```
 
 ---
 
-## 🇰🇭 សង្ខេបជាភាសាខ្មែរ
+# 🇰🇭 សេចក្តីសង្ខេប
 
-Django គឺជា Python Web Framework ដែលមានមុខងារជាច្រើនស្រាប់ ដូចជា:
+Django គួររៀនតាមលំដាប់នេះ៖
 
 ```text
+Python
+ ↓
+Django
+ ↓
 URL
  ↓
 View
  ↓
+Template
+ ↓
 Model
  ↓
+ORM
+ ↓
 Database
-```
-
-ហើយបន្ទាប់មក៖
-
-```text
+ ↓
 Forms
+ ↓
+CRUD
+ ↓
 Authentication
+ ↓
 Authorization
-Admin
+ ↓
 API
+ ↓
 Testing
+ ↓
 Security
-Caching
+ ↓
 PostgreSQL
+ ↓
+Redis
+ ↓
+Docker
+ ↓
 Deployment
 ```
 
-បើចង់រៀន Django ឱ្យខ្លាំង មិនគួររៀនតែ syntax ទេ។ គួររៀនពី **Request → URL → View → ORM → Database → Template → Response** ហើយបន្តទៅ **Security → Testing → Performance → Deployment**។
+**ចំណុចសំខាន់បំផុត** គឺត្រូវយល់ Request Flow៖
 
-Django official documentation ក៏រៀបចំមេរៀនចាប់ពី project, models, views, templates, forms, testing, static files រហូតដល់ reusable apps និង third-party packages ផងដែរ។
+```text
+Browser
+   ↓
+URL
+   ↓
+View
+   ↓
+Model / ORM
+   ↓
+Database
+   ↓
+View
+   ↓
+Template
+   ↓
+HTML Response
+   ↓
+Browser
+```
+
+បើអ្នកយល់ Flow នេះបានច្បាស់ អ្នកអាចចាប់ផ្តើមបង្កើត Django project ធំៗបាន។
 
 ---
 
-# 🚀 Next Step
-
-After finishing this README, build these projects in order:
+# ⭐ Recommended Next Projects
 
 ```text
 Project 1
 Simple Blog
-    ↓
+        ↓
 Project 2
-Authentication System
-    ↓
+Login / Register
+        ↓
 Project 3
 Product CRUD
-    ↓
+        ↓
 Project 4
 Inventory Management
-    ↓
+        ↓
 Project 5
 E-Commerce
-    ↓
+        ↓
 Project 6
-REST API
-    ↓
+Django REST API
+        ↓
 Project 7
-Django + PostgreSQL + Redis
-    ↓
+Django + PostgreSQL
+        ↓
 Project 8
-Dockerized Django
-    ↓
+Django + PostgreSQL + Redis
+        ↓
 Project 9
-Production Deployment
-    ↓
+Django + Docker
+        ↓
 Project 10
-Full Production E-Commerce System
+Full Production Application
 ```
 
-**The goal is not just to memorize Django syntax. Build projects until the complete architecture becomes natural.**
+---
+
+## 📌 Version Note
+
+This README targets **Django 6.0**.
+
+Django 6.0 supports **Python 3.12, 3.13, and 3.14**. Always use documentation matching the Django version installed in your project.
+
+Official Django documentation:
+
+**https://docs.djangoproject.com/en/6.0/**
+
+Django's own documentation provides the version-specific tutorials, API references, how-to guides, security documentation, testing documentation, and deployment documentation used throughout this README.
